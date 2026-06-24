@@ -433,6 +433,8 @@ public:
 	// value stored.
 	bool FindAttribute( const CEconItemAttributeDefinition *pAttrDef ) const
 	{
+		//hack for testing festivized weapons; don't merge this
+		if (strcmp(pAttrDef->GetDefinitionName(),"is_festivized") == 0) return true;
 		return ::FindAttribute( this, pAttrDef );
 	}
 
