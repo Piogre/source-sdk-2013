@@ -1882,7 +1882,7 @@ void CBackpackPanel::AddCommerceToContextMenu( Menu *pMenu, const char* pszActio
 //-----------------------------------------------------------------------------
 void CBackpackPanel::OpenContextMenu()
 {
-	return;
+	//return; //I need to test right click -> inspect and this prevents it; don't merge this
 
 	CUtlVector<CEconItemView*> vecSelectedItems; 
 	for ( int i = 0; i < m_pItemModelPanels.Count(); i++ )
