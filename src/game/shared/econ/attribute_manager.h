@@ -131,6 +131,9 @@ private:
 	{
 		float flValue = pAttribInterface->GetAttributeManager()->ApplyAttributeFloatWrapper( static_cast<float>( TValue ), const_cast<CBaseEntity *>( pEntity ), iszAttribHook, pItemList );
 
+		//hack for testing festivized weapons; don't merge this
+		if (strcmp(STRING(iszAttribHook), "is_festivized") == 0) flValue = 1.0f;
+
 		out = AttributeConvertFromFloat<T>( flValue );
 	}
 
