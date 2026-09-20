@@ -1882,7 +1882,7 @@ void CBackpackPanel::AddCommerceToContextMenu( Menu *pMenu, const char* pszActio
 //-----------------------------------------------------------------------------
 void CBackpackPanel::OpenContextMenu()
 {
-	return;
+	//return; for testing need to enable right-click inspect DONT MERGE THIS
 
 	CUtlVector<CEconItemView*> vecSelectedItems; 
 	for ( int i = 0; i < m_pItemModelPanels.Count(); i++ )
@@ -2063,7 +2063,8 @@ void CBackpackPanel::OpenContextMenu()
 		}
 		
 		// For customizable items only
-		if ( !pItem->IsTemporaryItem() )
+		//if ( !pItem->IsTemporaryItem() )
+		if( false )//later commerce stuff can crash the SDK, still want to exit here DONT MERGE THIS
 		{
 			bool bCanCraftUp = GetCollectionCraftingInvalidReason(pItem, NULL) == NULL;
 			bool bCanStatClockTrade = GetCraftCommonStatClockInvalidReason(pItem, NULL) == NULL;
