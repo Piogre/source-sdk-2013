@@ -880,8 +880,9 @@ enum
 {
 	kAttachedModelDisplayFlag_WorldModel = 0x01,
 	kAttachedModelDisplayFlag_ViewModel	 = 0x02,
+	kAttachedModelDisplayFlag_InventoryModel = 0x04,
 
-	kAttachedModelDisplayFlag_MaskAll	 = kAttachedModelDisplayFlag_WorldModel | kAttachedModelDisplayFlag_ViewModel,
+	kAttachedModelDisplayFlag_MaskAll	 = kAttachedModelDisplayFlag_WorldModel | kAttachedModelDisplayFlag_ViewModel | kAttachedModelDisplayFlag_InventoryModel,
 };
 
 struct attachedmodel_t
