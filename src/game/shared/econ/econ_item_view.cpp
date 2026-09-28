@@ -1079,6 +1079,24 @@ const char *CEconItemView::GetExtraWearableViewModel() const
 	return pData->GetExtraWearableViewModel();
 }
 
+const char *CEconItemView::GetOverrideHandModel() const
+{
+	CEconItemDefinition *pData = GetStaticData();
+	if ( !pData )
+		return NULL;
+
+	static CSchemaAttributeDefHandle pAttr_is_festivized( "is_festivized" );
+	if ( pAttr_is_festivized && FindAttribute( pAttr_is_festivized ) )
+	{
+		if ( pData->GetOverrideHandModelFestive() )
+		{
+			return pData->GetOverrideHandModelFestive();
+		}
+	}
+
+	return pData->GetOverrideHandModel();
+}
+
 const char *CEconItemView::GetVisionFilteredDisplayModel() const
 {
 	CEconItemDefinition *pData = GetStaticData();
