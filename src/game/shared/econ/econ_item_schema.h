@@ -1353,6 +1353,8 @@ public:
 	const char	*GetExtraWearableModel( void ) const			{ return m_pszWorldExtraWearableModel; }
 	const char	*GetExtraWearableViewModel( void ) const		{ return m_pszWorldExtraWearableViewModel; }
 	const char	*GetExtraWearableFestive( void ) const			{ return m_pszWorldExtraWearableFestive; }
+	const char	*GetOverrideHandModel( void ) const				{ return m_pszOverrideHandModel; }
+	const char	*GetOverrideHandModelFestive( void ) const		{ return m_pszOverrideHandModelFestive; }
 	const char  *GetVisionFilteredDisplayModel() const			{ return m_pszVisionFilteredDisplayModel; }
 	const char	*GetItemDesc( void ) const						{ return m_pszItemDesc; }
 	const char	*GetArmoryDescString( void ) const				{ return m_pszArmoryDesc; }
@@ -1547,6 +1549,8 @@ private:
 	const char		*m_pszWorldExtraWearableModel;		// Some weapons attach an extra wearable item to the player
 	const char		*m_pszWorldExtraWearableViewModel;	// Some weapons attach an extra wearable view model item to the player
 	const char		*m_pszWorldExtraWearableFestive;	// Some weapons attach an alternative extra wearable when festivized
+	const char		*m_pszOverrideHandModel;			// One weapon (gunslinger) sets an alternative hand model
+	const char		*m_pszOverrideHandModelFestive;		// Two weapons (gunslinger, fists) set an alternative hand model when festivized
 	const char		*m_pszVisionFilteredDisplayModel;	// Some weapons display differently depending on the viewer's filters
 
 	const char		*m_pszCollectionReference;			// Reference a colletion

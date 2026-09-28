@@ -2292,6 +2292,8 @@ m_pszWorldDisplayModel( NULL ),
 m_pszWorldExtraWearableModel( NULL ),
 m_pszWorldExtraWearableViewModel( NULL ),
 m_pszWorldExtraWearableFestive( NULL ),
+m_pszOverrideHandModel( NULL ),
+m_pszOverrideHandModelFestive( NULL ),
 m_pszVisionFilteredDisplayModel( NULL ),
 m_pszBrassModelOverride( NULL ),
 m_bHideBodyGroupsDeployedOnly( false ),
@@ -2769,6 +2771,16 @@ void CEconItemDefinition::GeneratePrecacheModelStrings( bool bDynamicLoad, CUtlV
 		out_pVecModelStrings->AddToTail( GetExtraWearableFestive() );
 	}
 
+	if ( GetOverrideHandModel() )
+	{
+		out_pVecModelStrings->AddToTail( GetOverrideHandModel() );
+	}
+
+	if ( GetOverrideHandModelFestive() )
+	{
+		out_pVecModelStrings->AddToTail( GetOverrideHandModelFestive() );
+	}
+
 	if ( GetVisionFilteredDisplayModel() )
 	{
 		out_pVecModelStrings->AddToTail( GetVisionFilteredDisplayModel() );
@@ -3181,6 +3193,8 @@ bool CEconItemDefinition::BInitFromKV( KeyValues *pKVItem, CUtlVector<CUtlString
 	m_pszWorldExtraWearableModel = m_pKVItem->GetString( "extra_wearable", NULL ); 
 	m_pszWorldExtraWearableViewModel = m_pKVItem->GetString( "extra_wearable_vm", NULL );
 	m_pszWorldExtraWearableFestive = m_pKVItem->GetString( "extra_wearable_festive", NULL );
+	m_pszOverrideHandModel = m_pKVItem->GetString( "override_hand_model", NULL );
+	m_pszOverrideHandModelFestive = m_pKVItem->GetString( "override_hand_model_festive", NULL );
 	m_pszVisionFilteredDisplayModel = pKVItem->GetString( "model_vision_filtered", NULL );
 	m_pszBrassModelOverride = m_pKVItem->GetString( "brass_eject_model", NULL );
 	m_bHideBodyGroupsDeployedOnly = m_pKVItem->GetBool( "hide_bodygroups_deployed_only" );
