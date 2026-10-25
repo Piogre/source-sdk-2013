@@ -6216,11 +6216,21 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
 				eBonusEffect = kBonusEffect_MiniCrit;
 			}
-			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim && pVictim->LastHitGroup() == HITGROUP_HEAD )
+			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
 			{
-				// Snowball headshot
-				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
-				eBonusEffect = kBonusEffect_MiniCrit;
+				// Snowball headshot full-crits
+				if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
+				{
+					info.SetCritType(CTakeDamageInfo::CRIT_FULL);
+					eBonusEffect = kBonusEffect_Crit;
+					bitsDamage |= DMG_CRITICAL;
+					info.AddDamageType(DMG_CRITICAL);
+				}
+				else
+				{
+					eBonusEffect = kBonusEffect_WaterBalloonSploosh;
+				}
+				bShowDisguisedCrit = true; //otherwise snowballs can be used to spycheck
 			}
 			else if ( pTFAttacker && ( pTFAttacker->m_Shared.InCond( TF_COND_ENERGY_BUFF ) ) )
 			{

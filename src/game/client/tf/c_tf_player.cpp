@@ -276,7 +276,7 @@ BonusEffect_t g_BonusEffects[ kBonusEffect_Count ] =
 	{ "TFPlayer.CritHit",					"crit_text",			PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_AttackerOnly, kEffectFilter_AttackerOnly,		true, true },
 	{ "TFPlayer.CritHitMini",				"minicrit_text",		PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_AttackerOnly, kEffectFilter_AttackerOnly,		true, true },
 	{ "TFPlayer.DoubleDonk",				"doubledonk_text",		PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_BothTeams,	kEffectFilter_BothTeams,		true, true },
-	{ NULL,									"sploosh_text",			PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_BothTeams,	kEffectFilter_BothTeams,		true, false },
+	{ "TFPlayer.CritHitMini",				"hit_text",				PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_AttackerOnly,	kEffectFilter_AttackerOnly,		true, true },
 	{ NULL,									NULL,					PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_AttackerOnly,	kEffectFilter_AttackerOnly,		true, false },
 	{ NULL,									"dragons_fury_effect",	PATTACH_ABSORIGIN,		NULL,			kEffectFilter_AttackerOnly, kEffectFilter_AttackerOnly,		true, true },
 	{ "TFPlayer.Stomp",						"stomp_text",			PATTACH_POINT_FOLLOW,	"head",			kEffectFilter_BothTeams,	kEffectFilter_BothTeams,		true, true },
