@@ -9,7 +9,7 @@
 
 #ifdef GAME_DLL
 #include "tf_player.h"
-//#include "te_effect_dispatch.h"
+#include "te_effect_dispatch.h"
 #include "studio.h"
 #else
 #include "c_tf_player.h"
@@ -223,15 +223,15 @@ void CTFProjectile_Snowball::OnHit( CBaseEntity *pOther )
 	BaseClass::OnHit( pOther );
 }
 
-//void CTFProjectile_Snowball::Explode( trace_t *pTrace, int bitsDamageType )
-//{
+void CTFProjectile_Snowball::Explode( trace_t *pTrace, int bitsDamageType )
+{
 	
-	//CEffectData data;
-	//data.m_vOrigin = GetAbsOrigin();
-	//data.m_vNormal = pTrace ? pTrace->plane.normal : Vector( 0, 0, 1 );
-	//data.m_nColor = ( GetTeamNumber() == TF_TEAM_BLUE ) ? 1 : 0;
-	//DispatchEffect( "TF_SnowballBreak", data );
+	CEffectData data;
+	data.m_vOrigin = GetAbsOrigin();
+	data.m_vNormal = pTrace ? pTrace->plane.normal : Vector( 0, 0, 1 );
+	data.m_nColor = ( GetTeamNumber() == TF_TEAM_BLUE ) ? 1 : 0;
+	DispatchEffect( "TF_SnowballBreak", data );
 
-	//BaseClass::Explode( pTrace, bitsDamageType );
-//}
+	BaseClass::Explode( pTrace, bitsDamageType );
+}
 #endif // GAME_DLL

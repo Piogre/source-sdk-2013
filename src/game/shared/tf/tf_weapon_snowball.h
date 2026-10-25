@@ -63,7 +63,7 @@ public:
 
 #ifdef GAME_DLL
 	virtual void		OnHit( CBaseEntity *pOther ) OVERRIDE;
-	//virtual void		Explode( trace_t *pTrace, int bitsDamageType ) OVERRIDE;
+	virtual void		Explode( trace_t *pTrace, int bitsDamageType ) OVERRIDE;
 	virtual float		GetDamage() OVERRIDE;
 	virtual float		GetDamageRadius() const OVERRIDE			{ return 0.0f; }
 	virtual const char *GetExplodeEffectParticle() const OVERRIDE { return "snowball_impact"; }

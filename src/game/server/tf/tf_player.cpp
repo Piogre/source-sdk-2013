@@ -8403,6 +8403,16 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 		// Make bullet impacts
 		g_pEffects->Ricochet( ptr->endpos - (vecDir * 8), -vecDir );
 	}
+	else if ( info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
+	{
+		// Snowball
+		trace_t tr;
+		UTIL_TraceLine( ptr->endpos, ptr->endpos + vecDir * 172.0f, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		if ( tr.fraction < 1.0f )
+		{
+			UTIL_DecalTrace( &tr, "SnowballSplat" );
+		}
+	}
 	else
 	{	
 		// Since this code only runs on the server, make sure it shows the tempents it creates.
@@ -9778,11 +9788,7 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 		else
 		{
-			bool bDisguised = m_Shared.InCond( TF_COND_DISGUISED ) && ( m_Shared.GetDisguiseTeam() == pTFAttacker->GetTeamNumber() );
-			if ( !bDisguised )
-			{
-				TFGameRules()->DeathNotice( this, info, "fish_notice" );
-			}
+			TFGameRules()->DeathNotice( this, info, "snowball_notice" );
 		}
 	}
 
@@ -10850,6 +10856,12 @@ int CTFPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		{
 			bBleed = false;
 		}
+	}
+
+	// Snowball bleed
+	if ( info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
+	{
+		bBleed = false;
 	}
 
 	if ( bBleed && ( realDamage > 0.f ) )

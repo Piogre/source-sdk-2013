@@ -12935,6 +12935,17 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 		}
 	}
 
+	//snowball hitting and not killing a disguised spy should show the disguise name as well
+	if (FStrEq(eventName, "snowball_notice"))
+	{
+		CTFPlayer* pDisguiseTarget = pTFPlayerVictim->m_Shared.GetDisguiseTarget();
+		if (pDisguiseTarget && (pScorer->GetTeamNumber() == pDisguiseTarget->GetTeamNumber()))
+		{
+			// We're disguised as a team mate. Pretend to die as that player instead of us.
+			pVictim = pTFPlayerVictim = pDisguiseTarget;
+		}
+	}
+
 	// Work out what killed the player, and send a message to all clients about it
 	int iWeaponID;
 	const char *killer_weapon_name = GetKillingWeaponName( info, pTFPlayerVictim, &iWeaponID );
@@ -13015,7 +13026,7 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 	{
 		if ( pScorer && pVictim && pScorer != pVictim )
 		{
-			if ( !FStrEq( eventName, "fish_notice" ) && !FStrEq( eventName, "fish_notice__arm" ) && !FStrEq( eventName, "slap_notice" ) && !FStrEq( eventName, "throwable_hit" ) )
+			if ( !FStrEq( eventName, "fish_notice" ) && !FStrEq( eventName, "fish_notice__arm" ) && !FStrEq( eventName, "slap_notice" ) && !FStrEq( eventName, "throwable_hit" ) && !FStrEq( eventName, "snowball_notice" ) )
 			{
 #ifndef _DEBUG
 				if ( GetGlobalTeam( pVictim->GetTeamNumber() ) && GetGlobalTeam( pVictim->GetTeamNumber() )->GetNumPlayers() > 1 )

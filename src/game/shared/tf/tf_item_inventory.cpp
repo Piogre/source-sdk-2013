@@ -631,7 +631,7 @@ bool CTFInventoryManager::SlotContainsBaseItems( EEquipType_t eType, int iSlot )
 		return !IsQuestSlot( iSlot );
 	}
 
-	// Snowball
+	// Smissmas snowball
 	if ( iSlot == LOADOUT_POSITION_ACTION )
 		return true;
 
@@ -705,7 +705,7 @@ CEconItemView *CTFInventoryManager::GetBaseItemForClass( int iClass, int iSlot )
 			}
 		}
 
-		// Snowball
+		// Smissmas snowball
 		static CEconItemView *s_pSnowballItem = NULL;
 		if ( !s_pSnowballItem )
 		{
