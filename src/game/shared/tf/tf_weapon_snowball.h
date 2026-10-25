@@ -68,6 +68,7 @@ public:
 	virtual float		GetDamageRadius() const OVERRIDE			{ return 0.0f; }
 	virtual const char *GetExplodeEffectParticle() const OVERRIDE { return "snowball_impact"; }
 	virtual const char *GetExplodeEffectSound() const OVERRIDE		{ return "Snowball.Splat"; }
+	virtual bool CanCollideWithTeammates() const OVERRIDE { return true; }
 #endif // GAME_DLL
 };
 
