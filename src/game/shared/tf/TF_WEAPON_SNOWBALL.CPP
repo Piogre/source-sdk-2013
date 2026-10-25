@@ -157,6 +157,8 @@ float CTFProjectile_Snowball::GetDamage()
 	return (tf_snowball_damage.GetFloat() == 0.0f ? 0.001f : tf_snowball_damage.GetFloat());
 }
 
+extern ConVar friendlyfire;
+
 void CTFProjectile_Snowball::OnHit( CBaseEntity *pOther )
 {
 	if ( m_bHit )
@@ -208,10 +210,10 @@ void CTFProjectile_Snowball::OnHit( CBaseEntity *pOther )
 		info.SetAttacker( pThrower );
 		info.SetInflictor( this );
 		info.SetWeapon( GetLauncher() );
-		info.SetDamage( pPlayer->InSameTeam(pThrower) ? 0.001f : GetDamage() );
+		info.SetDamage( ( pPlayer->InSameTeam(pThrower) && !friendlyfire.GetBool() ) ? 0.001f : GetDamage() );
 		info.SetDamageCustom( GetCustomDamageType() );
 		info.SetDamagePosition( GetAbsOrigin() );
-		info.SetDamageType( DMG_CLUB );
+		info.SetDamageType( DMG_GENERIC );
 		CalculateMeleeDamageForce( &info, vecToTarget, GetAbsOrigin(), 0.0f );
 
 		pPlayer->DispatchTraceAttack( info, vecToTarget, &trace );

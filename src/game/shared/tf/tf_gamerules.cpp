@@ -9859,11 +9859,6 @@ bool CTFGameRules::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAtt
 	if ( !pPlayer || !pAttacker )
 		return false;
 
-	if ( info.GetDamage() < 0.5 && info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE )
-	{
-		return true;
-	}
-
 	if ( IsTruceActive() && ( pPlayer != pAttacker ) && ( pPlayer->GetTeamNumber() != pAttacker->GetTeamNumber() ) )
 	{
 		if ( ( ( pAttacker->GetTeamNumber() == TF_TEAM_RED ) && ( pPlayer->GetTeamNumber() == TF_TEAM_BLUE ) ) || ( ( pAttacker->GetTeamNumber() == TF_TEAM_BLUE ) && ( pPlayer->GetTeamNumber() == TF_TEAM_RED ) ) )
@@ -9901,6 +9896,12 @@ bool CTFGameRules::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAtt
 	if ( info.GetDamageCustom() == TF_DMG_CUSTOM_SPELL_MONOCULUS && pAttacker->GetTeamNumber() == pPlayer->GetTeamNumber() )
 	{
 		return false;
+	}
+
+	//action slot toys that don't do real damage may still want to get damage effects such as killfeed notices
+	if (info.GetDamage() < 0.1 && info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE)
+	{
+		return true;
 	}
 
 	// in PvE modes, if entities are on the same team, they can't hurt each other
