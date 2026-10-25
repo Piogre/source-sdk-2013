@@ -32,6 +32,7 @@
 #include "tf_gamerules.h"
 #include "tf_logic_halloween_2014.h"
 #include "inputsystem/iinputsystem.h"
+#include "tf_weapon_snowball.h"
 
 #ifndef WIN32
 #define _cdecl
@@ -1063,10 +1064,22 @@ void CHudWeaponSelection::CycleToNextWeapon( void )
 		}
 	}
 
+	// Snowball
+	while ( pNextWeapon && dynamic_cast< C_TFSnowball* >( pNextWeapon ) )
+	{
+		pNextWeapon = FindNextWeaponInWeaponSelection( pNextWeapon->GetSlot(), pNextWeapon->GetPosition() );
+	}
+
 	if ( !pNextWeapon )
 	{
 		// wrap around back to start
 		pNextWeapon = FindNextWeaponInWeaponSelection(-1, -1);
+	}
+
+	// Snowball
+	while ( pNextWeapon && dynamic_cast< C_TFSnowball* >( pNextWeapon ) )
+	{
+		pNextWeapon = FindNextWeaponInWeaponSelection( pNextWeapon->GetSlot(), pNextWeapon->GetPosition() );
 	}
 
 	if ( pNextWeapon )
@@ -1127,10 +1140,22 @@ void CHudWeaponSelection::CycleToPrevWeapon( void )
 		}
 	}
 
+	// Snowball
+	while ( pNextWeapon && dynamic_cast< C_TFSnowball* >( pNextWeapon ) )
+	{
+		pNextWeapon = FindPrevWeaponInWeaponSelection( pNextWeapon->GetSlot(), pNextWeapon->GetPosition() );
+	}
+
 	if ( !pNextWeapon )
 	{
 		// wrap around back to end of weapon list
 		pNextWeapon = FindPrevWeaponInWeaponSelection(MAX_WEAPON_SLOTS, MAX_WEAPON_POSITIONS);
+	}
+
+	// Snowball
+	while ( pNextWeapon && dynamic_cast< C_TFSnowball* >( pNextWeapon ) )
+	{
+		pNextWeapon = FindPrevWeaponInWeaponSelection( pNextWeapon->GetSlot(), pNextWeapon->GetPosition() );
 	}
 
 	if ( pNextWeapon )

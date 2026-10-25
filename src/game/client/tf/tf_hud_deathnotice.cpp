@@ -794,6 +794,14 @@ void CTFHudDeathNotice::OnGameEvent( IGameEvent *event, int iDeathNoticeMsg )
 	if ( FStrEq( pszEventName, "player_death" ) || FStrEq( pszEventName, "object_destroyed" ) )
 	{
 		bool bIsObjectDestroyed = FStrEq( pszEventName, "object_destroyed" );
+
+		const char* pszSnowballWeapon = event->GetString("weapon");
+		if (FStrEq(pszSnowballWeapon, "snowball_kill") || FStrEq(pszSnowballWeapon, "snowball_headshot") || FStrEq(pszSnowballWeapon, "deflect_snowball"))
+		{
+			m_DeathNotices[iDeathNoticeMsg].wzInfoText[0] = L'\0';
+			m_DeathNotices[iDeathNoticeMsg].iconDeath = NULL;
+			m_DeathNotices[iDeathNoticeMsg].flCreationTime = gpGlobals->curtime;
+		}
 		int iCustomDamage = event->GetInt( "customkill" );
 		int iLocalPlayerIndex = GetLocalPlayerIndex();
 		

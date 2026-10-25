@@ -9769,6 +9769,23 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 	}
 
+	// Snowball
+	if ( pTFAttacker && info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
+	{
+		if ( m_iHealth <= 0 )
+		{
+			TFGameRules()->BroadcastSound( 255, "Snowball.KillJingle" );
+		}
+		else
+		{
+			bool bDisguised = m_Shared.InCond( TF_COND_DISGUISED ) && ( m_Shared.GetDisguiseTeam() == pTFAttacker->GetTeamNumber() );
+			if ( !bDisguised )
+			{
+				TFGameRules()->DeathNotice( this, info, "fish_notice" );
+			}
+		}
+	}
+
 	if ( IsPlayerClass( TF_CLASS_SCOUT) )
 	{
 		// Lose hype on take damage

@@ -631,6 +631,10 @@ bool CTFInventoryManager::SlotContainsBaseItems( EEquipType_t eType, int iSlot )
 		return !IsQuestSlot( iSlot );
 	}
 
+	// Snowball
+	if ( iSlot == LOADOUT_POSITION_ACTION )
+		return true;
+
 	// Passtime gun
 	if ( (iSlot == LOADOUT_POSITION_UTILITY) && TFGameRules() && TFGameRules()->IsPasstimeMode() )
 	{
@@ -700,6 +704,20 @@ CEconItemView *CTFInventoryManager::GetBaseItemForClass( int iClass, int iSlot )
 					return pActionItem;
 			}
 		}
+
+		// Snowball
+		static CEconItemView *s_pSnowballItem = NULL;
+		if ( !s_pSnowballItem )
+		{
+			const CEconItemDefinition *pSnowballDef = GetItemSchema()->GetItemDefinitionByName( "TF_WEAPON_SNOWBALL" );
+			if ( pSnowballDef )
+			{
+				s_pSnowballItem = new CEconItemView;
+				s_pSnowballItem->Init( pSnowballDef->GetDefinitionIndex(), AE_USE_SCRIPT_VALUE, AE_USE_SCRIPT_VALUE, false );
+			}
+		}
+		if ( s_pSnowballItem )
+			return s_pSnowballItem;
 	}
 
 	if ( iSlot >= LOADOUT_POSITION_HEAD )

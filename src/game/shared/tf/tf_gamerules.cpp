@@ -6216,6 +6216,12 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
 				eBonusEffect = kBonusEffect_MiniCrit;
 			}
+			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim && pVictim->LastHitGroup() == HITGROUP_HEAD )
+			{
+				// Snowball headshot
+				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
+				eBonusEffect = kBonusEffect_MiniCrit;
+			}
 			else if ( pTFAttacker && ( pTFAttacker->m_Shared.InCond( TF_COND_ENERGY_BUFF ) ) )
 			{
 				// Scouts using crit drink do mini-crits, as well as receive them
@@ -9853,6 +9859,11 @@ bool CTFGameRules::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAtt
 	if ( !pPlayer || !pAttacker )
 		return false;
 
+	if ( info.GetDamage() < 0.5 && info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE )
+	{
+		return true;
+	}
+
 	if ( IsTruceActive() && ( pPlayer != pAttacker ) && ( pPlayer->GetTeamNumber() != pAttacker->GetTeamNumber() ) )
 	{
 		if ( ( ( pAttacker->GetTeamNumber() == TF_TEAM_RED ) && ( pPlayer->GetTeamNumber() == TF_TEAM_BLUE ) ) || ( ( pAttacker->GetTeamNumber() == TF_TEAM_BLUE ) && ( pPlayer->GetTeamNumber() == TF_TEAM_RED ) ) )
@@ -12458,7 +12469,27 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 	else if ( info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE ||
 			  info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE_KILL )			// Throwables
 	{
-		if ( pVictim && pVictim->GetHealth() <= 0 )
+		if (pInflictor && FClassnameIs(pInflictor, "tf_projectile_snowball"))
+		{
+			CTFWeaponBaseGrenadeProj* pSnowball = dynamic_cast<CTFWeaponBaseGrenadeProj*>(pInflictor);
+			if ( pSnowball && pSnowball->GetDeflected() )
+			{
+				killer_weapon_name = "deflect_snowball";
+			}
+			else if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
+			{
+				killer_weapon_name = "snowball_headshot";
+			}
+			else if ( pVictim->InSameTeam( pKiller ) )
+			{
+				killer_weapon_name = "snowball_hit";
+			}
+			else
+			{
+				killer_weapon_name = "snowball_kill";
+			}
+		}
+		else if ( pVictim && pVictim->GetHealth() <= 0 )
 		{
 			killer_weapon_name = "water_balloon_kill";	
 		}
