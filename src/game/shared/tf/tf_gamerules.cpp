@@ -7468,7 +7468,8 @@ float CTFGameRules::ApplyOnDamageAliveModifyRules( const CTakeDamageInfo &info, 
 				PotentiallyDamageMitigatedEvent( pVictim, pVictim, pWatch, flBeforeflRealDamage, flRealDamage );
 
 				// Original damage would've killed the player, but the reduced damage wont
-				if ( flBeforeflRealDamage >= pVictim->GetHealth() && flRealDamage < pVictim->GetHealth() )
+				// if real damage and the original damage amount are both less than .1, it's a snowball and we don't want to activate dead ringer
+				if ( flBeforeflRealDamage >= pVictim->GetHealth() && flRealDamage < pVictim->GetHealth() && !( info.GetDamage() < 0.1f && flRealDamage < 0.1f ) )
 				{
 					IGameEvent *pEvent = gameeventmanager->CreateEvent( "deadringer_cheat_death" );
 					if ( pEvent )
@@ -12491,7 +12492,7 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 			{
 				killer_weapon_name = "snowball_headshot";
 			}
-			else if ( pVictim->InSameTeam( pKiller ) )
+			else if ( pVictim->InSameTeam( pKiller ) || ( pVictim->m_Shared.GetDisguiseTarget() && pVictim->m_Shared.GetDisguiseTarget()->InSameTeam( pKiller ) ) )
 			{
 				killer_weapon_name = "snowball_hit";
 			}
@@ -12935,8 +12936,14 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 		}
 	}
 
+	// Work out what killed the player, and send a message to all clients about it
+	int iWeaponID;
+	const char *killer_weapon_name = GetKillingWeaponName( info, pTFPlayerVictim, &iWeaponID );
+	const char *killer_weapon_log_name = killer_weapon_name;
+
 	//snowball hitting and not killing a disguised spy should show the disguise name as well
-	if (FStrEq(eventName, "snowball_notice"))
+	//this comes after finding the killing weapon name to avoid checking the hitgroup of the disguise target
+	if ( FStrEq( eventName, "snowball_notice" ) )
 	{
 		CTFPlayer* pDisguiseTarget = pTFPlayerVictim->m_Shared.GetDisguiseTarget();
 		if (pDisguiseTarget && (pScorer->GetTeamNumber() == pDisguiseTarget->GetTeamNumber()))
@@ -12945,11 +12952,6 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 			pVictim = pTFPlayerVictim = pDisguiseTarget;
 		}
 	}
-
-	// Work out what killed the player, and send a message to all clients about it
-	int iWeaponID;
-	const char *killer_weapon_name = GetKillingWeaponName( info, pTFPlayerVictim, &iWeaponID );
-	const char *killer_weapon_log_name = killer_weapon_name;
 
 	// Kill eater events.
 	{

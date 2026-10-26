@@ -8394,7 +8394,7 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 		info_modified.SetDamage( info_modified.GetDamage() * tf_damage_multiplier_red.GetFloat() );
 	}
 
-	if ( m_Shared.InCond( TF_COND_DISGUISED ) )
+	if ( m_Shared.InCond( TF_COND_DISGUISED ) || ( info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) ) )
 	{
 		// no impact effects
 	}
@@ -8402,16 +8402,6 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 	{ 
 		// Make bullet impacts
 		g_pEffects->Ricochet( ptr->endpos - (vecDir * 8), -vecDir );
-	}
-	else if ( info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
-	{
-		// Snowball
-		trace_t tr;
-		UTIL_TraceLine( ptr->endpos, ptr->endpos + vecDir * 172.0f, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
-		if ( tr.fraction < 1.0f )
-		{
-			UTIL_DecalTrace( &tr, "SnowballSplat" );
-		}
 	}
 	else
 	{	
@@ -9613,6 +9603,13 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	// Display any effect associate with this damage type
 	DamageEffect( info.GetDamage(),bitsDamage );
 
+	// Snowball is generic but wants a special screenflash
+	if (info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
+	{
+		color32 snow = { 200, 230, 255, 10 };
+		UTIL_ScreenFade(this, snow, 0.5f, 0.05f, FFADE_IN);
+	}
+
 	m_bitsDamageType |= bitsDamage; // Save this so we can report it to the client
 	m_bitsHUDDamage = -1;  // make sure the damage bits get reset
 
@@ -9690,7 +9687,7 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 	}
 	
-	if ( IsPlayerClass( TF_CLASS_SPY ) && ( inputInfo.GetDamageCustom() != TF_DMG_CUSTOM_TELEFRAG ) && ( inputInfo.GetDamageCustom() != TF_DMG_CUSTOM_CROC ) )
+	if ( IsPlayerClass( TF_CLASS_SPY ) && ( inputInfo.GetDamageCustom() != TF_DMG_CUSTOM_TELEFRAG ) && ( inputInfo.GetDamageCustom() != TF_DMG_CUSTOM_CROC ) && !( inputInfo.GetDamage() < 0.1f ) )
 	{
 		// Trigger feign death if the player has it prepped...
 		if ( m_Shared.IsFeignDeathReady() )
