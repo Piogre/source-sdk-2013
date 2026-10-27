@@ -222,3 +222,67 @@ void CTFProjectile_Snowball::OnHit( CBaseEntity *pOther )
 	BaseClass::OnHit( pOther );
 }
 #endif // GAME_DLL
+
+#ifdef CLIENT_DLL
+
+//-----------------------------------------------------------------------------
+// CEquipSnowballNotification
+//-----------------------------------------------------------------------------
+void CEquipSnowballNotification::Accept()
+{
+	m_bHasTriggered = true;
+
+	CPlayerInventory *pLocalInv = TFInventoryManager()->GetLocalInventory();
+	if ( !pLocalInv )
+	{
+		MarkForDeletion();
+		return;
+	}
+
+	C_TFPlayer *pLocalPlayer = C_TFPlayer::GetLocalTFPlayer();
+	if ( !pLocalPlayer )
+	{
+		MarkForDeletion();
+		return;
+	}
+
+	// Default item becomes a snowball in this mode
+	itemid_t iItemId = INVALID_ITEM_ID;
+
+	if ( iItemId == INVALID_ITEM_ID )
+	{
+		iItemId = 0;
+
+		static CSchemaItemDefHandle pItemDef_Snowball( "TF_WEAPON_SNOWBALL" );
+		CEconItemView *pDefaultSnowball = TFInventoryManager()->GetBaseItemForClass( pLocalPlayer->GetPlayerClass()->GetClassIndex(), LOADOUT_POSITION_ACTION );
+		if ( pDefaultSnowball )
+		{
+			if ( pDefaultSnowball->GetItemDefinition() == pItemDef_Snowball )
+			{
+				iItemId = pDefaultSnowball->GetItemID();
+			}
+		}
+	}
+
+	TFInventoryManager()->EquipItemInLoadout( pLocalPlayer->GetPlayerClass()->GetClassIndex(), LOADOUT_POSITION_ACTION, iItemId );
+
+	// Tell the GC to tell server that we should respawn if we're in a respawn room
+
+	MarkForDeletion();
+}
+
+//===========================================================================================
+void CEquipSnowballNotification::UpdateTick()
+{
+	C_TFPlayer *pLocalPlayer = C_TFPlayer::GetLocalTFPlayer();
+	if ( pLocalPlayer )
+	{
+		CTFSnowball *pSnowball = dynamic_cast<CTFSnowball*>( TFInventoryManager()->GetItemInLoadoutForClass( pLocalPlayer->GetPlayerClass()->GetClassIndex(), LOADOUT_POSITION_ACTION ) );
+		if ( pSnowball )
+		{
+			MarkForDeletion();
+		}
+	}
+}
+
+#endif // CLIENT_DLL

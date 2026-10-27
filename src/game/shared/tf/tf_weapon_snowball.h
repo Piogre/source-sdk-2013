@@ -13,6 +13,7 @@
 #include "tf_weapon_throwable.h"
 
 #ifdef CLIENT_DLL
+#include "econ_notifications.h"
 #define CTFSnowball				C_TFSnowball
 #define CTFProjectile_Snowball	C_TFProjectile_Snowball
 #endif
@@ -70,5 +71,45 @@ public:
 	virtual bool CanCollideWithTeammates() const OVERRIDE { return true; }
 #endif // GAME_DLL
 };
+
+#ifdef CLIENT_DLL
+
+class CEquipSnowballNotification : public CEconNotification
+{
+public:
+	CEquipSnowballNotification() : CEconNotification()
+	{
+		m_bHasTriggered = false;
+	}
+
+	~CEquipSnowballNotification()
+	{
+		if (!m_bHasTriggered)
+		{
+			m_bHasTriggered = true;
+		}
+	}
+
+	virtual void MarkForDeletion()
+	{
+		m_bHasTriggered = true;
+		CEconNotification::MarkForDeletion();
+	}
+
+	virtual bool BShowInGameElements() const { return true; }
+	virtual EType NotificationType() { return eType_AcceptDecline; }
+
+	virtual void Accept();
+	virtual void Trigger() { Accept(); }
+	virtual void Decline() { MarkForDeletion(); }
+	virtual void UpdateTick();
+
+	static bool IsNotificationType( CEconNotification *pNotification ) { return dynamic_cast<CEquipSnowballNotification*>( pNotification ) != NULL; }
+
+private:
+	bool m_bHasTriggered;
+};
+
+#endif // CLIENT_DLL
 
 #endif // TF_WEAPON_SNOWBALL_H

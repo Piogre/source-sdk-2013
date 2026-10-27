@@ -631,23 +631,22 @@ bool CTFInventoryManager::SlotContainsBaseItems( EEquipType_t eType, int iSlot )
 		return !IsQuestSlot( iSlot );
 	}
 
-	// Smissmas snowball
-	if ( iSlot == LOADOUT_POSITION_ACTION )
-		return true;
-
 	// Passtime gun
 	if ( (iSlot == LOADOUT_POSITION_UTILITY) && TFGameRules() && TFGameRules()->IsPasstimeMode() )
 	{
 		return true;
 	}
 
-	// Halloween spellbook
+	// Halloween spellbook, grappling hook, snowball
 	if ( iSlot == LOADOUT_POSITION_ACTION )
 	{
 		if ( TFGameRules() && TFGameRules()->IsUsingSpells() )
 			return true;
 
 		if ( TFGameRules() && TFGameRules()->IsUsingGrapplingHook() )
+			return true;
+
+		if ( TFGameRules() && TFGameRules()->IsHolidayActive( kHoliday_Christmas ) )
 			return true;
 	}
 	// Normal game
@@ -694,7 +693,13 @@ CEconItemView *CTFInventoryManager::GetBaseItemForClass( int iClass, int iSlot )
 		{
 			stockActionItemDefIndices.AddToTail( pItemDef_MvMCanteen->GetDefinitionIndex() );
 		}
-		
+
+		static CSchemaItemDefHandle pItemDef_Snowball( "TF_WEAPON_SNOWBALL" );
+		if ( TFGameRules() && TFGameRules()->IsHolidayActive( kHoliday_Christmas ) )
+		{
+			stockActionItemDefIndices.AddToTail( pItemDef_Snowball->GetDefinitionIndex() );
+		}
+
 		// Traverse List
 		for ( CEconItemView *pActionItem : m_pBaseLoadoutItems )
 		{
@@ -705,19 +710,6 @@ CEconItemView *CTFInventoryManager::GetBaseItemForClass( int iClass, int iSlot )
 			}
 		}
 
-		// Smissmas snowball
-		static CEconItemView *s_pSnowballItem = NULL;
-		if ( !s_pSnowballItem )
-		{
-			const CEconItemDefinition *pSnowballDef = GetItemSchema()->GetItemDefinitionByName( "TF_WEAPON_SNOWBALL" );
-			if ( pSnowballDef )
-			{
-				s_pSnowballItem = new CEconItemView;
-				s_pSnowballItem->Init( pSnowballDef->GetDefinitionIndex(), AE_USE_SCRIPT_VALUE, AE_USE_SCRIPT_VALUE, false );
-			}
-		}
-		if ( s_pSnowballItem )
-			return s_pSnowballItem;
 	}
 
 	if ( iSlot >= LOADOUT_POSITION_HEAD )
