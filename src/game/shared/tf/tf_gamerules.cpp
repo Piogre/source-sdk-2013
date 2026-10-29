@@ -6198,6 +6198,29 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
 				eBonusEffect = kBonusEffect_MiniCrit;
 			}
+			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
+			{
+				// Snowball headshot full-crits
+				// this has to go before the general deflect check below or it gets skipped if deflected
+				if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
+				{
+					info.SetCritType( CTakeDamageInfo::CRIT_FULL );
+					eBonusEffect = kBonusEffect_Crit;
+					bitsDamage |= DMG_CRITICAL;
+					info.AddDamageType( DMG_CRITICAL );
+				}
+				else if ( pBaseGrenade && pBaseGrenade->GetDeflected() )
+				{
+					// Reflected snowball should minicrit
+					info.SetCritType( CTakeDamageInfo::CRIT_MINI );
+					eBonusEffect = kBonusEffect_MiniCrit;
+				}
+				else
+				{
+					eBonusEffect = kBonusEffect_WaterBalloonSploosh;
+				}
+				bShowDisguisedCrit = true; //otherwise snowballs can be used to spycheck
+			}
 			else if ( ( pInflictor && pInflictor->IsPlayer() == false ) && ( ( pBaseRocket && pBaseRocket->GetDeflected() ) || ( pBaseGrenade && pBaseGrenade->GetDeflected() && ( pBaseGrenade->ShouldMiniCritOnReflect() ) ) ) )
 			{
 				// Reflected rockets, grenades (non-remote detonate), arrows always mini-crit
@@ -6215,22 +6238,6 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 				// Long range cleaver hit
 				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
 				eBonusEffect = kBonusEffect_MiniCrit;
-			}
-			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
-			{
-				// Snowball headshot full-crits
-				if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
-				{
-					info.SetCritType(CTakeDamageInfo::CRIT_FULL);
-					eBonusEffect = kBonusEffect_Crit;
-					bitsDamage |= DMG_CRITICAL;
-					info.AddDamageType(DMG_CRITICAL);
-				}
-				else
-				{
-					eBonusEffect = kBonusEffect_WaterBalloonSploosh;
-				}
-				bShowDisguisedCrit = true; //otherwise snowballs can be used to spycheck
 			}
 			else if ( pTFAttacker && ( pTFAttacker->m_Shared.InCond( TF_COND_ENERGY_BUFF ) ) )
 			{
@@ -12486,19 +12493,11 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 			CTFWeaponBaseGrenadeProj* pSnowball = dynamic_cast<CTFWeaponBaseGrenadeProj*>(pInflictor);
 			if ( pSnowball && pSnowball->GetDeflected() )
 			{
-				killer_weapon_name = "deflect_snowball";
-			}
-			else if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
-			{
-				killer_weapon_name = "snowball_headshot";
-			}
-			else if ( pVictim->InSameTeam( pKiller ) || ( pVictim->m_Shared.GetDisguiseTarget() && pVictim->m_Shared.GetDisguiseTarget()->InSameTeam( pKiller ) ) )
-			{
-				killer_weapon_name = "snowball_hit";
+				killer_weapon_name = ( pVictim->LastHitGroup() == HITGROUP_HEAD ? "snowball_kill" : "deflect_snowball" );
 			}
 			else
 			{
-				killer_weapon_name = "snowball_kill";
+				killer_weapon_name = ( pVictim->LastHitGroup() == HITGROUP_HEAD ? "snowball_headshot" : "snowball_hit" );
 			}
 		}
 		else if ( pVictim && pVictim->GetHealth() <= 0 )
