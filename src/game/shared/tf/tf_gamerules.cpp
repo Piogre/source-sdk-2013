@@ -5962,6 +5962,7 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 	CBaseEntity *pAttacker = info.GetAttacker();
 	CTFPlayer *pTFAttacker = ToTFPlayer( pAttacker );
 	CTFWeaponBase *pWeapon = dynamic_cast<CTFWeaponBase *>( info.GetWeapon() );
+	CBaseEntity* pInflictor = info.GetInflictor();
 
 	int iAttackIgnoresResists = 0;
 	CALL_ATTRIB_HOOK_INT_ON_OTHER( pWeapon, iAttackIgnoresResists, mod_pierce_resists_absorbs );
@@ -5992,6 +5993,19 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 	if ( bitsDamage & DMG_CRITICAL )
 	{
 		info.SetCritType( CTakeDamageInfo::CRIT_FULL );
+	}
+	//snowball headshot wont have DMG_CRITICAL
+	if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
+	{
+		// Snowball headshot full-crits
+		if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
+		{
+			info.SetCritType( CTakeDamageInfo::CRIT_FULL );
+			eBonusEffect = kBonusEffect_Crit;
+			bitsDamage |= DMG_CRITICAL;
+			info.AddDamageType( DMG_CRITICAL );
+		}
+		bShowDisguisedCrit = true; //otherwise snowballs can be used to spycheck
 	}
 
 	// First figure out whether this is going to be a full forced crit for some specific reason. It's
@@ -6161,7 +6175,6 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 
 		if ( info.GetCritType() == CTakeDamageInfo::CRIT_NONE )
 		{
-			CBaseEntity *pInflictor = info.GetInflictor();
 			CTFGrenadePipebombProjectile *pBaseGrenade = dynamic_cast< CTFGrenadePipebombProjectile* >( pInflictor );
 			CTFBaseRocket *pBaseRocket = dynamic_cast< CTFBaseRocket* >( pInflictor );
 
@@ -6200,16 +6213,7 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 			}
 			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
 			{
-				// Snowball headshot full-crits
-				// this has to go before the general deflect check below or it gets skipped if deflected
-				if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
-				{
-					info.SetCritType( CTakeDamageInfo::CRIT_FULL );
-					eBonusEffect = kBonusEffect_Crit;
-					bitsDamage |= DMG_CRITICAL;
-					info.AddDamageType( DMG_CRITICAL );
-				}
-				else if ( pBaseGrenade && pBaseGrenade->GetDeflected() )
+				if ( pBaseGrenade && pBaseGrenade->GetDeflected() )
 				{
 					// Reflected snowball should minicrit
 					info.SetCritType( CTakeDamageInfo::CRIT_MINI );
