@@ -17,8 +17,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar tf_snowball_damage( "tf_snowball_damage", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar tf_snowball_recharge( "tf_snowball_recharge", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar tf_snowball_damage( "tf_snowball_damage", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Damage dealt by a snowball to an enemy player, or a teammate if friendly fire is turned on" );
+ConVar tf_snowball_recharge( "tf_snowball_recharge", "10", FCVAR_REPLICATED | FCVAR_CHEAT, "Recharge time in seconds for snowball item" );
 
 //=============================================================================
 //

@@ -929,6 +929,8 @@ extern ConVar mp_tournament_post_match_period;
 extern ConVar tf_flag_return_on_touch;
 extern ConVar tf_flag_return_time_credit_factor;
 ConVar tf_grapplinghook_enable( "tf_grapplinghook_enable", "0", FCVAR_REPLICATED );
+ConVar tf_snowball_enable( "tf_snowball_enable", "1", FCVAR_REPLICATED, "0: disabled, 1: enabled during Christmas holiday, 2: always enabled, bypassing holiday restriction" );
+
 
 #ifdef GAME_DLL
 CUtlString s_strNextMvMPopFile;
@@ -3759,6 +3761,16 @@ bool CTFGameRules::IsUsingGrapplingHook( void ) const
 }
 
 //-----------------------------------------------------------------------------
+bool CTFGameRules::IsUsingSnowball(void) const
+{
+	if ( IsHolidayActive( kHoliday_Christmas ) )
+	{
+		return tf_snowball_enable.GetBool();
+	}
+	return tf_snowball_enable.GetInt() == 2;
+}
+
+//-----------------------------------------------------------------------------
 bool CTFGameRules::IsTruceActive( void ) const
 {
 	return m_bTruceActive;
@@ -5994,7 +6006,7 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 	{
 		info.SetCritType( CTakeDamageInfo::CRIT_FULL );
 	}
-	//snowball headshot wont have DMG_CRITICAL
+	//snowball headshot wont have DMG_CRITICAL yet because adding it earlier causes flinching
 	if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
 	{
 		// Snowball headshot full-crits
@@ -6211,20 +6223,6 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
 				eBonusEffect = kBonusEffect_MiniCrit;
 			}
-			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
-			{
-				if ( pBaseGrenade && pBaseGrenade->GetDeflected() )
-				{
-					// Reflected snowball should minicrit
-					info.SetCritType( CTakeDamageInfo::CRIT_MINI );
-					eBonusEffect = kBonusEffect_MiniCrit;
-				}
-				else
-				{
-					eBonusEffect = kBonusEffect_WaterBalloonSploosh;
-				}
-				bShowDisguisedCrit = true; //otherwise snowballs can be used to spycheck
-			}
 			else if ( ( pInflictor && pInflictor->IsPlayer() == false ) && ( ( pBaseRocket && pBaseRocket->GetDeflected() ) || ( pBaseGrenade && pBaseGrenade->GetDeflected() && ( pBaseGrenade->ShouldMiniCritOnReflect() ) ) ) )
 			{
 				// Reflected rockets, grenades (non-remote detonate), arrows always mini-crit
@@ -6248,6 +6246,20 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 				// Scouts using crit drink do mini-crits, as well as receive them
 				info.SetCritType( CTakeDamageInfo::CRIT_MINI );
 				eBonusEffect = kBonusEffect_MiniCrit;
+			}
+			else if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
+			{
+				if ( pBaseGrenade && pBaseGrenade->GetDeflected() )
+				{
+					// Reflected snowball should minicrit
+					info.SetCritType( CTakeDamageInfo::CRIT_MINI );
+					eBonusEffect = kBonusEffect_MiniCrit;
+				}
+				else
+				{
+					eBonusEffect = kBonusEffect_WaterBalloonSploosh;
+				}
+				bShowDisguisedCrit = true; //otherwise snowballs can be used to spycheck
 			}
 			else if ( ( info.GetDamageType() & DMG_IGNITE ) && pVictim && pVictim->m_Shared.InCond( TF_COND_BURNING ) && info.GetDamageCustom() == TF_DMG_CUSTOM_BURNING_FLARE )
 			{

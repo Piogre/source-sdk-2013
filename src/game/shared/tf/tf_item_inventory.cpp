@@ -646,7 +646,7 @@ bool CTFInventoryManager::SlotContainsBaseItems( EEquipType_t eType, int iSlot )
 		if ( TFGameRules() && TFGameRules()->IsUsingGrapplingHook() )
 			return true;
 
-		if ( TFGameRules() && TFGameRules()->IsHolidayActive( kHoliday_Christmas ) )
+		if ( TFGameRules() && TFGameRules()->IsUsingSnowball() )
 			return true;
 	}
 	// Normal game
@@ -695,7 +695,7 @@ CEconItemView *CTFInventoryManager::GetBaseItemForClass( int iClass, int iSlot )
 		}
 
 		static CSchemaItemDefHandle pItemDef_Snowball( "TF_WEAPON_SNOWBALL" );
-		if ( TFGameRules() && TFGameRules()->IsHolidayActive( kHoliday_Christmas ) )
+		if ( TFGameRules() && TFGameRules()->IsUsingSnowball() )
 		{
 			stockActionItemDefIndices.AddToTail( pItemDef_Snowball->GetDefinitionIndex() );
 		}

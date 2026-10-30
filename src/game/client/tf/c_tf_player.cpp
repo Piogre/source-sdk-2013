@@ -11116,7 +11116,7 @@ void C_TFPlayer::FireGameEvent( IGameEvent *event )
 				}
 			}
 			// Add EconNotification to equip Snowball here
-			else if ( TFGameRules() && TFGameRules()->IsHolidayActive( kHoliday_Christmas ) )
+			else if ( TFGameRules() && TFGameRules()->IsUsingSnowball() )
 			{
 				int iCount = NotificationQueue_Count( &CEquipSnowballNotification::IsNotificationType );
 				CEconItemView *pItem = TFInventoryManager()->GetItemInLoadoutForClass( event->GetInt( "class" ), LOADOUT_POSITION_ACTION );

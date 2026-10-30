@@ -4431,8 +4431,14 @@ bool CTFPlayer::ItemIsAllowed( CEconItemView *pItem )
 		return TFGameRules() && TFGameRules()->IsPasstimeMode();
 	}
 
-	// Holiday Restriction
+    // Snowball convar can bypass holiday restriction below
 	CEconItemDefinition* pData = pItem->GetStaticData();
+	if ( TFGameRules() && pData && V_stristr( pData->GetItemClass(), "tf_weapon_snowball" ) )
+	{
+		return TFGameRules() && TFGameRules()->IsUsingSnowball();
+	}
+
+	// Holiday Restriction
 	if ( TFGameRules() && pData && pData->GetHolidayRestriction() )
 	{
 		int iHolidayRestriction = UTIL_GetHolidayForString( pData->GetHolidayRestriction() );
