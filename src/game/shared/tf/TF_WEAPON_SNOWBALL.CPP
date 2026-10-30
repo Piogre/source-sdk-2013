@@ -212,7 +212,7 @@ void CTFProjectile_Snowball::OnHit( CBaseEntity *pOther )
 		info.SetDamage( ( pPlayer->InSameTeam(pThrower) && !friendlyfire.GetBool() ) ? 0.001f : GetDamage() );
 		info.SetDamageCustom( GetCustomDamageType() );
 		info.SetDamagePosition( GetAbsOrigin() );
-		info.SetDamageType( DMG_GENERIC );
+		info.SetDamageType( info.GetDamage() < 0.1f ? DMG_GENERIC : DMG_CLUB ); //if snowball dealing no damage, no push force nor flinch
 		CalculateMeleeDamageForce( &info, vecToTarget, GetAbsOrigin(), 0.0f );
 
 		pPlayer->DispatchTraceAttack( info, vecToTarget, &trace );

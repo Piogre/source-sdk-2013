@@ -794,8 +794,8 @@ void CTFHudDeathNotice::OnGameEvent( IGameEvent *event, int iDeathNoticeMsg )
 	const char *pszEventName = event->GetName();
 
 	// Snowball 
-	const char* pszWeaponName = event->GetString("weapon");
-	if (StringHasPrefix(pszWeaponName, "snowball_") || FStrEq(pszWeaponName, "deflect_snowball"))
+	const char *pszWeaponName = event->GetString( "weapon" );
+	if ( StringHasPrefix( pszWeaponName, "snowball_" ) )
 	{
 		DeathNoticeItem& msg = m_DeathNotices[iDeathNoticeMsg];
 		Q_snprintf(msg.szIcon, sizeof(msg.szIcon), "d_%s", pszWeaponName);
@@ -806,8 +806,7 @@ void CTFHudDeathNotice::OnGameEvent( IGameEvent *event, int iDeathNoticeMsg )
 	{
 		bool bIsObjectDestroyed = FStrEq( pszEventName, "object_destroyed" );
 
-		const char* pszSnowballWeapon = event->GetString("weapon");
-		if (FStrEq(pszWeaponName, "snowball_kill") || FStrEq(pszWeaponName, "snowball_headshot") || FStrEq(pszWeaponName, "deflect_snowball"))
+		if ( StringHasPrefix( pszWeaponName, "snowball_" ) )
 		{
 			m_DeathNotices[iDeathNoticeMsg].wzInfoText[0] = L'\0';
 			m_DeathNotices[iDeathNoticeMsg].flCreationTime = gpGlobals->curtime;

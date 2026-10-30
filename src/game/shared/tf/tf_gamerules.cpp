@@ -12509,7 +12509,7 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 			CTFWeaponBaseGrenadeProj* pSnowball = dynamic_cast<CTFWeaponBaseGrenadeProj*>(pInflictor);
 			if ( pSnowball && pSnowball->GetDeflected() )
 			{
-				killer_weapon_name = ( pVictim->LastHitGroup() == HITGROUP_HEAD ? "snowball_kill" : "deflect_snowball" );
+				killer_weapon_name = ( pVictim->LastHitGroup() == HITGROUP_HEAD ? "snowball_deflect_headshot" : "snowball_deflect" );
 			}
 			else
 			{

@@ -18,7 +18,7 @@
 #define CTFProjectile_Snowball	C_TFProjectile_Snowball
 #endif
 
-#define TF_SNOWBALL_MODEL		"models/weapons/c_models/c_snowball/c_snowball.mdl"
+#define TF_SNOWBALL_MODEL		"models/workshop/weapons/c_models/c_snowball/c_snowball.mdl"
 
 // *************************************************************************************************************************
 class CTFSnowball : public CTFThrowable
