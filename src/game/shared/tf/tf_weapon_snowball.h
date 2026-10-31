@@ -37,8 +37,10 @@ public:
 	virtual void		PrimaryAttack( void ) OVERRIDE;
 	virtual int			GetSlot( void ) const OVERRIDE	{ return 5; }
 	virtual bool		CanInspect() const OVERRIDE		{ return false; }
+	virtual bool		VisibleInWeaponSelection( void ) { return false; }
+	virtual bool		CanBeSelected( void ) { return false; }
 
-	virtual const char*	GetEffectLabelText( void ) OVERRIDE			{ return "#TF_Snowball_Meter"; }
+	virtual const char *GetEffectLabelText( void ) OVERRIDE			{ return "#TF_Snowball_Meter"; }
 	virtual float		InternalGetEffectBarRechargeTime( void ) OVERRIDE;
 	virtual void		GetProjectileEntityName( CAttribute_String *attrProjectileEntityName ) OVERRIDE;
 
@@ -84,7 +86,7 @@ public:
 
 	~CEquipSnowballNotification()
 	{
-		if (!m_bHasTriggered)
+		if ( !m_bHasTriggered )
 		{
 			m_bHasTriggered = true;
 		}

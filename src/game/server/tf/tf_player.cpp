@@ -4431,19 +4431,23 @@ bool CTFPlayer::ItemIsAllowed( CEconItemView *pItem )
 		return TFGameRules() && TFGameRules()->IsPasstimeMode();
 	}
 
-    // Snowball convar can bypass holiday restriction below
-	CEconItemDefinition* pData = pItem->GetStaticData();
-	if ( TFGameRules() && pData && V_stristr( pData->GetItemClass(), "tf_weapon_snowball" ) )
-	{
-		return TFGameRules() && TFGameRules()->IsUsingSnowball();
-	}
-
 	// Holiday Restriction
+	CEconItemDefinition *pData = pItem->GetStaticData();
 	if ( TFGameRules() && pData && pData->GetHolidayRestriction() )
 	{
 		int iHolidayRestriction = UTIL_GetHolidayForString( pData->GetHolidayRestriction() );
-		if ( iHolidayRestriction != kHoliday_None && !TFGameRules()->IsHolidayActive( iHolidayRestriction ) )
+		if ( V_stristr( pData->GetItemClass(), "tf_weapon_snowball") )
+		{
+			//snowball convar can bypass holiday restriction
+			if ( !TFGameRules()->IsUsingSnowball() )
+			{
+				return false;
+			}
+		}
+		else if ( iHolidayRestriction != kHoliday_None && !TFGameRules()->IsHolidayActive( iHolidayRestriction ) )
+		{
 			return false;
+		}
 	}
 
 	if ( TFGameRules()->InStalemate() && mp_stalemate_meleeonly.GetBool() )
@@ -9610,7 +9614,7 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	DamageEffect( info.GetDamage(),bitsDamage );
 
 	// Snowball is generic but wants a special screenflash
-	if (info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
+	if ( info.GetInflictor() && FClassnameIs( info.GetInflictor(), "tf_projectile_snowball" ) )
 	{
 		color32 snow = { 200, 230, 255, 10 };
 		UTIL_ScreenFade(this, snow, 0.5f, 0.05f, FFADE_IN);

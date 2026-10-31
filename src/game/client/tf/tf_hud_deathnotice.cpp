@@ -797,9 +797,9 @@ void CTFHudDeathNotice::OnGameEvent( IGameEvent *event, int iDeathNoticeMsg )
 	const char *pszWeaponName = event->GetString( "weapon" );
 	if ( StringHasPrefix( pszWeaponName, "snowball_" ) )
 	{
-		DeathNoticeItem& msg = m_DeathNotices[iDeathNoticeMsg];
-		Q_snprintf(msg.szIcon, sizeof(msg.szIcon), "d_%s", pszWeaponName);
-		msg.iconDeath = GetIcon(msg.szIcon, msg.bLocalPlayerInvolved ? kDeathNoticeIcon_Inverted : kDeathNoticeIcon_Standard);
+		DeathNoticeItem &msg = m_DeathNotices[iDeathNoticeMsg];
+		Q_snprintf( msg.szIcon, sizeof( msg.szIcon ), "d_%s", pszWeaponName );
+		msg.iconDeath = GetIcon( msg.szIcon, msg.bLocalPlayerInvolved ? kDeathNoticeIcon_Inverted : kDeathNoticeIcon_Standard );
 	}
 
 	if ( FStrEq( pszEventName, "player_death" ) || FStrEq( pszEventName, "object_destroyed" ) )

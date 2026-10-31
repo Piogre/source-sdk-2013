@@ -709,7 +709,6 @@ CEconItemView *CTFInventoryManager::GetBaseItemForClass( int iClass, int iSlot )
 					return pActionItem;
 			}
 		}
-
 	}
 
 	if ( iSlot >= LOADOUT_POSITION_HEAD )

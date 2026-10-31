@@ -17,8 +17,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar tf_snowball_damage( "tf_snowball_damage", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Damage dealt by a snowball to an enemy player, or a teammate if friendly fire is turned on" );
-ConVar tf_snowball_recharge( "tf_snowball_recharge", "10", FCVAR_REPLICATED | FCVAR_CHEAT, "Recharge time in seconds for snowball item" );
+ConVar tf_snowball_damage( "tf_snowball_damage", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Damage dealt by a snowball to an enemy player, or a teammate if friendly fire is turned on" );
+ConVar tf_snowball_recharge( "tf_snowball_recharge", "10", FCVAR_REPLICATED | FCVAR_NOTIFY, "Recharge time in seconds for snowball item" );
 
 //=============================================================================
 //
@@ -60,11 +60,6 @@ void CTFSnowball::Precache( void )
 	PrecacheScriptSound( "Snowball.Splat" );
 	PrecacheParticleSystem( "snowball_trail" );
 	PrecacheParticleSystem( "snowball_impact" );
-	//PrecacheModel( "models/weapons/c_models/c_snowball/c_snowball_chunk01.mdl" );
-	//PrecacheModel( "models/weapons/c_models/c_snowball/c_snowball_chunk02.mdl" );
-	//PrecacheModel( "models/weapons/c_models/c_snowball/c_snowball_chunk03.mdl" );
-	//PrecacheModel( "models/weapons/c_models/c_snowball/c_snowball_chunk04.mdl" );
-	//PrecacheModel( "models/weapons/c_models/c_snowball/c_snowball_chunk05.mdl" );
 }
 
 bool CTFSnowball::CanDeploy( void )
@@ -153,7 +148,7 @@ void CTFSnowball::ItemPostFrame( void )
 #ifdef GAME_DLL
 float CTFProjectile_Snowball::GetDamage()
 {
-	return (tf_snowball_damage.GetFloat() == 0.0f ? 0.001f : tf_snowball_damage.GetFloat());
+	return ( tf_snowball_damage.GetFloat() == 0.0f ? 0.001f : tf_snowball_damage.GetFloat() );
 }
 
 extern ConVar friendlyfire;
@@ -209,7 +204,7 @@ void CTFProjectile_Snowball::OnHit( CBaseEntity *pOther )
 		info.SetAttacker( pThrower );
 		info.SetInflictor( this );
 		info.SetWeapon( GetLauncher() );
-		info.SetDamage( ( pPlayer->InSameTeam(pThrower) && !friendlyfire.GetBool() ) ? 0.001f : GetDamage() );
+		info.SetDamage( ( pPlayer->InSameTeam( pThrower ) && !friendlyfire.GetBool() ) ? 0.001f : GetDamage() );
 		info.SetDamageCustom( GetCustomDamageType() );
 		info.SetDamagePosition( GetAbsOrigin() );
 		info.SetDamageType( info.GetDamage() < 0.1f ? DMG_GENERIC : DMG_CLUB ); //if snowball dealing no damage, no push force nor flinch

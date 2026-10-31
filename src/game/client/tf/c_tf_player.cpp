@@ -11125,7 +11125,7 @@ void C_TFPlayer::FireGameEvent( IGameEvent *event )
 				{
 					if ( iCount == 0 )
 					{
-						CEquipSnowballNotification*pNotification = new CEquipSnowballNotification();
+						CEquipSnowballNotification *pNotification = new CEquipSnowballNotification();
 						pNotification->SetText( "#TF_Snowball_EquipAction" );
 						pNotification->SetLifetime( 10.0f );
 						NotificationQueue_Add( pNotification );

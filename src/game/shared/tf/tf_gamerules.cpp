@@ -929,7 +929,7 @@ extern ConVar mp_tournament_post_match_period;
 extern ConVar tf_flag_return_on_touch;
 extern ConVar tf_flag_return_time_credit_factor;
 ConVar tf_grapplinghook_enable( "tf_grapplinghook_enable", "0", FCVAR_REPLICATED );
-ConVar tf_snowball_enable( "tf_snowball_enable", "1", FCVAR_REPLICATED, "0: disabled, 1: enabled during Christmas holiday, 2: always enabled, bypassing holiday restriction" );
+ConVar tf_snowball_enable( "tf_snowball_enable", "1", FCVAR_REPLICATED | FCVAR_NOTIFY, "0: disabled, 1: enabled during Christmas holiday, 2: always enabled, bypassing holiday restriction" );
 
 
 #ifdef GAME_DLL
@@ -3761,7 +3761,7 @@ bool CTFGameRules::IsUsingGrapplingHook( void ) const
 }
 
 //-----------------------------------------------------------------------------
-bool CTFGameRules::IsUsingSnowball(void) const
+bool CTFGameRules::IsUsingSnowball( void ) const
 {
 	if ( IsHolidayActive( kHoliday_Christmas ) )
 	{
@@ -5974,7 +5974,7 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 	CBaseEntity *pAttacker = info.GetAttacker();
 	CTFPlayer *pTFAttacker = ToTFPlayer( pAttacker );
 	CTFWeaponBase *pWeapon = dynamic_cast<CTFWeaponBase *>( info.GetWeapon() );
-	CBaseEntity* pInflictor = info.GetInflictor();
+	CBaseEntity *pInflictor = info.GetInflictor();
 
 	int iAttackIgnoresResists = 0;
 	CALL_ATTRIB_HOOK_INT_ON_OTHER( pWeapon, iAttackIgnoresResists, mod_pierce_resists_absorbs );
@@ -12504,9 +12504,9 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 	else if ( info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE ||
 			  info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE_KILL )			// Throwables
 	{
-		if (pInflictor && FClassnameIs(pInflictor, "tf_projectile_snowball"))
+		if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) )
 		{
-			CTFWeaponBaseGrenadeProj* pSnowball = dynamic_cast<CTFWeaponBaseGrenadeProj*>(pInflictor);
+			CTFWeaponBaseGrenadeProj *pSnowball = dynamic_cast<CTFWeaponBaseGrenadeProj*>( pInflictor );
 			if ( pSnowball && pSnowball->GetDeflected() )
 			{
 				killer_weapon_name = ( pVictim->LastHitGroup() == HITGROUP_HEAD ? "snowball_deflect_headshot" : "snowball_deflect" );
@@ -12960,10 +12960,10 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 	//this comes after finding the killing weapon name to avoid checking the hitgroup of the disguise target
 	if ( FStrEq( eventName, "snowball_notice" ) )
 	{
-		CTFPlayer* pDisguiseTarget = pTFPlayerVictim->m_Shared.GetDisguiseTarget();
-		if (pDisguiseTarget && (pScorer->GetTeamNumber() == pDisguiseTarget->GetTeamNumber()))
+		CTFPlayer *pDisguiseTarget = pTFPlayerVictim->m_Shared.GetDisguiseTarget();
+		if ( pDisguiseTarget && ( pScorer->GetTeamNumber() == pDisguiseTarget->GetTeamNumber() ) )
 		{
-			// We're disguised as a team mate. Pretend to die as that player instead of us.
+			// Snowball is hitting player disguised as thrower's teammate; show the disguise target's name to prevent using this for spy checking
 			pVictim = pTFPlayerVictim = pDisguiseTarget;
 		}
 	}
