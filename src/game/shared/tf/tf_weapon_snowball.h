@@ -43,6 +43,7 @@ public:
 	virtual const char *GetEffectLabelText( void ) OVERRIDE			{ return "#TF_Snowball_Meter"; }
 	virtual float		InternalGetEffectBarRechargeTime( void ) OVERRIDE;
 	virtual void		GetProjectileEntityName( CAttribute_String *attrProjectileEntityName ) OVERRIDE;
+	static const char  *GetHandEffect( CEconItemView *pItem );
 
 private:
 	bool				m_bThrown;

@@ -145,6 +145,16 @@ void CTFSnowball::ItemPostFrame( void )
 #endif
 }
 
+//-----------------------------------------------------------------------------
+/* static */ const char *CTFSnowball::GetHandEffect( CEconItemView *pItem )
+{
+	if ( pItem && pItem->GetSOCData() && ( pItem->GetSOCData()->GetQuality() == AE_SELFMADE || pItem->GetSOCData()->GetQuality() == AE_COMMUNITY ) )
+	{
+		return "community_sparkle";
+	}
+	return "snowball_1";
+}
+
 #ifdef GAME_DLL
 float CTFProjectile_Snowball::GetDamage()
 {
