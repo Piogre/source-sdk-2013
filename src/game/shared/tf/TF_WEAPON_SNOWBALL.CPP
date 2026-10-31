@@ -12,6 +12,7 @@
 #include "studio.h"
 #else
 #include "c_tf_player.h"
+#include "iclientmode.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -49,6 +50,10 @@ CTFSnowball::CTFSnowball()
 {
 	m_bThrown = false;
 	m_flSwitchBackTime = 0.0f;
+#ifdef CLIENT_DLL
+	m_hHandEffect = NULL;
+	m_hHandEffectWeapon = NULL;
+#endif // CLIENT_DLL
 }
 
 void CTFSnowball::Precache( void )
@@ -60,6 +65,7 @@ void CTFSnowball::Precache( void )
 	PrecacheScriptSound( "Snowball.Splat" );
 	PrecacheParticleSystem( "snowball_trail" );
 	PrecacheParticleSystem( "snowball_impact" );
+	PrecacheParticleSystem( "snowball_1" );
 }
 
 bool CTFSnowball::CanDeploy( void )
@@ -106,9 +112,86 @@ void CTFSnowball::PrimaryAttack( void )
 	}
 }
 
+//-----------------------------------------------------------------------------
+void CTFSnowball::ItemBusyFrame( void )
+{
+#ifdef CLIENT_DLL
+	if ( m_hHandEffectWeapon && m_hHandEffect )
+		return;
+
+	CTFPlayer *pPlayer = GetTFPlayerOwner();
+	if ( !pPlayer )
+		return;
+
+	if ( IsFirstPersonView() )
+	{
+		m_hHandEffectWeapon = pPlayer->GetViewModel();
+	}
+	else
+	{
+		//only need this effect in first person since we're hiding the snowball model due to odd weapon_bone movement in the spell cast animations
+		return;
+	}
+
+	if ( !m_hHandEffectWeapon )
+		return;
+
+	if ( UsingViewModel() && !g_pClientMode->ShouldDrawViewModel() )
+	{
+		// Prevent effects when the ViewModel is hidden with r_drawviewmodel=0
+		return;
+	}
+
+	C_BaseAnimating *pBase = (C_BaseAnimating*)m_hHandEffectWeapon.Get();
+	int iAttachment = pBase->C_BaseAnimating::LookupAttachment( "effect_hand_R" );
+
+	// Start the muzzle flash, if a system hasn't already been started.
+	if ( iAttachment > 0 )
+	{
+		m_hHandEffect = pBase->ParticleProp()->Create( "snowball_trail", PATTACH_POINT_FOLLOW, iAttachment );
+	}
+	else
+	{
+		if ( m_hHandEffect )
+		{
+			m_hHandEffectWeapon->ParticleProp()->StopEmission( m_hHandEffect );
+			m_hHandEffectWeapon = NULL;
+			m_hHandEffect = NULL;
+		}
+	}
+#endif
+}
+
+//-----------------------------------------------------------------------------
+void CTFSnowball::ItemHolsterFrame( void )
+{
+#ifdef CLIENT_DLL
+	if ( !m_hHandEffectWeapon )
+		return;
+
+	// Stop the muzzle flash.
+	if ( m_hHandEffect )
+	{
+		m_hHandEffectWeapon->ParticleProp()->StopEmission( m_hHandEffect );
+		m_hHandEffectWeapon = NULL;
+		m_hHandEffect = NULL;
+	}
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void CTFSnowball::ItemPostFrame( void )
 {
 	BaseClass::ItemPostFrame();
+
+#ifdef CLIENT_DLL
+	if ( m_hHandEffect )
+	{
+		m_hHandEffectWeapon->ParticleProp()->StopEmission( m_hHandEffect );
+		m_hHandEffectWeapon = NULL;
+		m_hHandEffect = NULL;
+	}
+#endif
 
 	CTFPlayer *pPlayer = GetTFPlayerOwner();
 	if ( !pPlayer )

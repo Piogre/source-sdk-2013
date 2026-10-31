@@ -34,6 +34,8 @@ public:
 	virtual bool		CanDeploy( void ) OVERRIDE;
 	virtual bool		Deploy( void ) OVERRIDE;
 	virtual void		ItemPostFrame( void ) OVERRIDE;
+	virtual void		ItemBusyFrame( void ) OVERRIDE;
+	virtual void		ItemHolsterFrame( void ) OVERRIDE;
 	virtual void		PrimaryAttack( void ) OVERRIDE;
 	virtual int			GetSlot( void ) const OVERRIDE	{ return 5; }
 	virtual bool		CanInspect() const OVERRIDE		{ return false; }
@@ -44,6 +46,10 @@ public:
 	virtual float		InternalGetEffectBarRechargeTime( void ) OVERRIDE;
 	virtual void		GetProjectileEntityName( CAttribute_String *attrProjectileEntityName ) OVERRIDE;
 	static const char  *GetHandEffect( CEconItemView *pItem );
+#ifdef CLIENT_DLL
+	EHANDLE			m_hHandEffectWeapon;
+	HPARTICLEFFECT	m_hHandEffect;
+#endif // CLIENT_DLL
 
 private:
 	bool				m_bThrown;
