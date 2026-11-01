@@ -165,6 +165,8 @@ void CTFSnowball::ItemBusyFrame( void )
 //-----------------------------------------------------------------------------
 void CTFSnowball::ItemHolsterFrame( void )
 {
+	BaseClass::ItemHolsterFrame();
+	m_bThrown = false;
 #ifdef CLIENT_DLL
 	if ( !m_hHandEffectWeapon )
 		return;
