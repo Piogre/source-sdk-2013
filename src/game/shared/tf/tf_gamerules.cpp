@@ -6009,8 +6009,9 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 	//snowball headshot wont have DMG_CRITICAL yet because adding it earlier causes flinching
 	if ( pInflictor && FClassnameIs( pInflictor, "tf_projectile_snowball" ) && pVictim )
 	{
-		// Snowball headshot full-crits
-		if ( pVictim->LastHitGroup() == HITGROUP_HEAD )
+		// Snowball headshot full-crits, also check if the projectile was critboosted
+		CTFProjectile_Throwable *pProjectile = dynamic_cast<CTFProjectile_Throwable*>( pInflictor );
+		if ( pVictim->LastHitGroup() == HITGROUP_HEAD || pProjectile->IsCritical() )
 		{
 			info.SetCritType( CTakeDamageInfo::CRIT_FULL );
 			eBonusEffect = kBonusEffect_Crit;
