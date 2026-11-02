@@ -1812,7 +1812,7 @@ void CTFPlayerModelPanel::UpdateActionSlotEffects(
 
 	if ( !m_aParticleSystems[ SYSTEM_ACTIONSLOT ] )
 	{
-		if ( FStrEq( m_pHeldItem->GetStaticData()->GetItemClass(), "tf_weapon_snowball" ) )
+		if ( m_pHeldItem && FStrEq( m_pHeldItem->GetStaticData()->GetItemClass(), "tf_weapon_snowball" ) )
 		{
 			m_aParticleSystems[ SYSTEM_ACTIONSLOT ] = CreateParticleData( CTFSnowball::GetHandEffect( m_pHeldItem ) );
 		}

@@ -6011,7 +6011,7 @@ bool CTFGameRules::ApplyOnDamageModifyRules( CTakeDamageInfo &info, CBaseEntity 
 	{
 		// Snowball headshot full-crits, also check if the projectile was critboosted
 		CTFProjectile_Throwable *pProjectile = dynamic_cast<CTFProjectile_Throwable*>( pInflictor );
-		if ( pVictim->LastHitGroup() == HITGROUP_HEAD || pProjectile->IsCritical() )
+		if ( pVictim->LastHitGroup() == HITGROUP_HEAD || ( pProjectile && pProjectile->IsCritical() ) )
 		{
 			info.SetCritType( CTakeDamageInfo::CRIT_FULL );
 			eBonusEffect = kBonusEffect_Crit;
@@ -9934,7 +9934,7 @@ bool CTFGameRules::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAtt
 	}
 
 	//action slot toys that don't do real damage may still want to get damage effects such as killfeed notices
-	if (info.GetDamage() < 0.1 && info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE)
+	if ( info.GetDamage() < 0.1 && info.GetDamageCustom() == TF_DMG_CUSTOM_THROWABLE )
 	{
 		return true;
 	}
@@ -12962,7 +12962,7 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 	if ( FStrEq( eventName, "snowball_notice" ) )
 	{
 		CTFPlayer *pDisguiseTarget = pTFPlayerVictim->m_Shared.GetDisguiseTarget();
-		if ( pDisguiseTarget && ( pScorer->GetTeamNumber() == pDisguiseTarget->GetTeamNumber() ) )
+		if ( pDisguiseTarget && pScorer && ( pScorer->GetTeamNumber() == pDisguiseTarget->GetTeamNumber() ) )
 		{
 			// Snowball is hitting player disguised as thrower's teammate; show the disguise target's name to prevent using this for spy checking
 			pVictim = pTFPlayerVictim = pDisguiseTarget;

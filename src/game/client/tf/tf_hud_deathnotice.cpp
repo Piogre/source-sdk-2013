@@ -1293,7 +1293,7 @@ void CTFHudDeathNotice::OnGameEvent( IGameEvent *event, int iDeathNoticeMsg )
 
 		Q_strncpy( msg.szIcon, bDefense ? szDefenseIcons[iIndex] : szCaptureIcons[iIndex], ARRAYSIZE( msg.szIcon ) );
 	}
-	else if ( FStrEq( "fish_notice", pszEventName ) || FStrEq( "fish_notice__arm", pszEventName ) || FStrEq( "slap_notice", pszEventName )  || FStrEq( "snowball_notice", pszEventName ) )
+	else if ( FStrEq( "fish_notice", pszEventName ) || FStrEq( "fish_notice__arm", pszEventName ) || FStrEq( "slap_notice", pszEventName ) || FStrEq( "snowball_notice", pszEventName ) )
 	{
 		DeathNoticeItem &msg = m_DeathNotices[ iDeathNoticeMsg ];
 		int deathFlags = event->GetInt( "death_flags" );
